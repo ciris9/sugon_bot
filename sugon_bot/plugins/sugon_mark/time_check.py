@@ -18,7 +18,7 @@ def time_check():
 
 
 def date_check(pass_date):
-    if pass_date != datetime.now():
+    if pass_date != datetime.datetime.now():
         return False
     else:
         return True

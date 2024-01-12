@@ -61,9 +61,15 @@ async def mark_note_handle(event: Event):
 
         await mark_note.finish("请先设置你的姓名：/请叫我 [name]")
 
-    if not time_check.time_check():
+        pass
 
-        await mark_note.finish(Object["name"] + "现在不在打卡时间哦")
+    is_in_time = time_check.time_check()
+
+    if not is_in_time:
+
+        mark_note.finish(Object["name"] + "现在不在打卡时间哦")
+
+        pass
 
     args = event.get_message()
 
@@ -79,7 +85,10 @@ async def mark_note_handle(event: Event):
                 break
 
             if not is_image:
+
                 await mark_note.finish("你这家伙，这可不是截图ε=( o｀ω′)ノ")
+
+                pass
 
     if is_legal:
 
@@ -125,9 +134,15 @@ async def mark_normal_handle(event: Event):
     except KeyError:
 
         await mark_note.finish("请先设置你的姓名：/请叫我 [name]")
+        pass
 
-    if not time_check.time_check():
-        await mark_note.finish(Object["name"] + "现在不在打卡时间哦")
+    is_in_time = time_check.time_check()
+
+    if not is_in_time:
+
+        mark_note.finish(Object["name"] + "现在不在打卡时间哦")
+
+        pass
 
     args = event.get_message()
 
