@@ -28,12 +28,12 @@ sub_plugins = nonebot.load_plugins(
     str(Path(__file__).parent.joinpath("plugins").resolve())
 )
 
-
-mark_note = on_command("marknote", aliases={"marknote","笔记打卡"}, priority=10, block=True)
-mark_normal = on_command("marknormal", aliases={"marknormal","截图打卡"}, priority=10, block=True)
-name = on_command("nn",aliases={"nn","请叫我"}, priority=10, block=True)
+mark_note = on_command("marknote", aliases={"marknote", "笔记打卡"}, priority=10, block=True)
+mark_normal = on_command("marknormal", aliases={"marknormal", "截图打卡"}, priority=10, block=True)
+name = on_command("nn", aliases={"nn", "请叫我"}, priority=10, block=True)
 show = on_command("point", priority=10, block=True)
-show_all = on_command("show",aliases= {"show","显示所有人的积分"},priority=10, block=True)
+show_all = on_command("show", aliases={"show", ""}, priority=10, block=True)
+
 
 @name.handle()
 async def name_handle(event: Event):
@@ -50,7 +50,6 @@ async def name_handle(event: Event):
     pass
 
 
-@limit_time("17:00", "2:00", mark_note)
 @mark_note.handle()
 async def mark_note_handle(event: Event):
     ID = event.get_user_id()
@@ -62,6 +61,10 @@ async def mark_note_handle(event: Event):
     except KeyError:
 
         await mark_note.finish("请先设置你的姓名：/请叫我 [name]")
+
+    if not time_check.time_check():
+
+        await mark_note.finish(Object[ID]["name"] + "现在不在打卡时间哦")
 
     args = event.get_message()
 
@@ -88,7 +91,7 @@ async def mark_note_handle(event: Event):
         except Exception as e:
 
             passtime = datetime.now()
-            loadData.count_board[ID] = str(passtime.year)+str(passtime.month)+str(passtime.day)
+            loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
         if date_check(passtime):
             await mark_note.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
@@ -106,14 +109,13 @@ async def mark_note_handle(event: Event):
         loadData.write_in(ID, point)
         loadData.save()
 
-        await mark_note.finish(loadData.mark_board[ID]["name"]+"打卡成功!你的积分现在是：" + str(point))
+        await mark_note.finish(loadData.mark_board[ID]["name"] + "打卡成功!你的积分现在是：" + str(point))
     else:
 
         await mark_note.finish("你的打卡内容呢？")
     pass
 
 
-@limit_time("17:00", "2:00", mark_normal)
 @mark_normal.handle()
 async def mark_normal_handle(event: Event):
     ID = event.get_user_id()
@@ -124,6 +126,9 @@ async def mark_normal_handle(event: Event):
     except KeyError:
 
         await mark_note.finish("请先设置你的姓名：/请叫我 [name]")
+
+    if not time_check.time_check():
+        await mark_note.finish(Object[ID]["name"] + "现在不在打卡时间哦")
 
     args = event.get_message()
 
@@ -140,7 +145,6 @@ async def mark_normal_handle(event: Event):
                 break
 
             if not is_image:
-
                 await mark_normal.finish("你这家伙，这可不是截图ε=( o｀ω′)ノ")
 
     if is_legal:
@@ -153,7 +157,7 @@ async def mark_normal_handle(event: Event):
         except Exception as e:
 
             passtime = datetime.now()
-            loadData.count_board[ID] = str(passtime.year)+str(passtime.month)+str(passtime.day)
+            loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
         loadData.save_count()
 
@@ -168,11 +172,12 @@ async def mark_normal_handle(event: Event):
         loadData.write_in(ID, point)
         loadData.save()
 
-        await mark_normal.finish(loadData.mark_board[ID]["name"]+"打卡成功!你的积分现在是：" + str(point))
+        await mark_normal.finish(loadData.mark_board[ID]["name"] + "打卡成功!你的积分现在是：" + str(point))
     else:
 
         await mark_normal.finish("你的打卡内容呢？")
     pass
+
 
 @show.handle()
 async def handle_show(event: Event):
@@ -181,14 +186,15 @@ async def handle_show(event: Event):
     try:
         point = int(loadData.mark_board[ID]["point"])
 
-        await show.finish(loadData.mark_board[ID]["name"]+"你的分数是"+str(point))
+        await show.finish(loadData.mark_board[ID]["name"] + "你的分数是" + str(point))
     except KeyError:
 
         await show.finish("你这家伙既没有命名也没有签到，到底想看什么啊ε=( o｀ω′)ノ")
+
 
 @show_all.handle()
 async def handle_show_all():
     ans = ""
     for item in loadData.mark_board.values():
-        ans = ans + item["name"]+"积分:"+str(item["point"])+"\n"
+        ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show.finish(ans)
