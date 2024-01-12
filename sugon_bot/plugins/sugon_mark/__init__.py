@@ -105,7 +105,7 @@ async def mark_note_handle(event: Event):
 
         except Exception as e:
 
-            passtime = datetime.now()
+            passtime = time_check.nowtime
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
         loadData.write_in_count(time_check.nowtime, ID)
@@ -179,7 +179,7 @@ async def mark_normal_handle(event: Event):
 
         except Exception as e:
 
-            passtime = datetime.now()
+            passtime = time_check.nowtime
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
         loadData.write_in_count(time_check.nowtime, ID)
