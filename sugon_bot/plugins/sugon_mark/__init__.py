@@ -56,7 +56,6 @@ async def name_handle(event: Event):
 async def mark_note_handle(event: Event):
     ID = event.get_user_id()
 
-    current_date = datetime.now()
     try:
         Object = loadData.mark_board[ID]
 
@@ -103,18 +102,18 @@ async def mark_note_handle(event: Event):
 
                 pass
 
-        except Exception as e:
+        except KeyError:
 
             passtime = time_check.nowtime
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
-        loadData.write_in_count(time_check.nowtime, ID)
+        loadData.write_in_count(ID, time_check.nowtime)
         loadData.save_count()
 
         try:
             point = int(loadData.mark_board[ID]["point"]) + 2
 
-        except Exception as e:
+        except KeyError:
             loadData.mark_board[ID]["point"] = 2
 
             point = loadData.mark_board[ID]["point"]
@@ -177,12 +176,12 @@ async def mark_normal_handle(event: Event):
 
                 pass
 
-        except Exception as e:
+        except KeyError:
 
             passtime = time_check.nowtime
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
-        loadData.write_in_count(time_check.nowtime, ID)
+        loadData.write_in_count(ID, time_check.nowtime)
         loadData.save_count()
 
         try:
