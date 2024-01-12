@@ -69,7 +69,6 @@ async def mark_note_handle(event: Event):
     is_in_time = time_check.time_check()
 
     if not is_in_time:
-
         mark_note.finish(Object["name"] + "现在不在打卡时间哦")
 
         pass
@@ -88,7 +87,6 @@ async def mark_note_handle(event: Event):
                 break
 
             if not is_image:
-
                 await mark_note.finish("你这家伙，这可不是截图ε=( o｀ω′)ノ")
 
                 pass
@@ -110,6 +108,7 @@ async def mark_note_handle(event: Event):
             passtime = datetime.now()
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
+        loadData.write_in_count(time_check.nowtime, ID)
         loadData.save_count()
 
         try:
@@ -145,7 +144,6 @@ async def mark_normal_handle(event: Event):
     is_in_time = time_check.time_check()
 
     if not is_in_time:
-
         mark_note.finish(Object["name"] + "现在不在打卡时间哦")
 
         pass
@@ -165,7 +163,6 @@ async def mark_normal_handle(event: Event):
                 break
 
             if not is_image:
-
                 await mark_normal.finish("你这家伙，这可不是截图ε=( o｀ω′)ノ")
 
                 pass
@@ -173,11 +170,9 @@ async def mark_normal_handle(event: Event):
     if is_legal:
 
         try:
-
             passtime = loadData.count_board[ID]
 
             if date_check(passtime):
-
                 await mark_normal.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
 
                 pass
@@ -187,6 +182,7 @@ async def mark_normal_handle(event: Event):
             passtime = datetime.now()
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
 
+        loadData.write_in_count(time_check.nowtime, ID)
         loadData.save_count()
 
         try:

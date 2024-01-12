@@ -3,6 +3,7 @@ import datetime
 
 # 获取当前时间
 now = datetime.datetime.now()
+nowtime = str(now.year)+str(now.month)+str(now.day)
 
 # 定义 17:00 和 02:00 的时间对象
 start = datetime.time(17, 0, 0)
@@ -19,9 +20,7 @@ def time_check():
 
 def date_check(pass_date):
 
-    now = datetime.datetime.now()
-
-    if pass_date != str(now.year)+str(now.month)+str(now.day):
+    if pass_date != nowtime:
 
         return False
     else:
