@@ -95,14 +95,16 @@ async def mark_note_handle(event: Event):
         try:
             passtime = loadData.count_board[ID]
 
+            if date_check(passtime):
+
+                await mark_note.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
+
+                pass
 
         except Exception as e:
 
             passtime = datetime.now()
             loadData.count_board[ID] = str(passtime.year) + str(passtime.month) + str(passtime.day)
-
-        if date_check(passtime):
-            await mark_note.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
 
         loadData.save_count()
 
@@ -165,8 +167,12 @@ async def mark_normal_handle(event: Event):
 
         try:
             passtime = loadData.count_board[ID]
+
             if date_check(passtime):
+
                 await mark_normal.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
+
+                pass
 
         except Exception as e:
 
