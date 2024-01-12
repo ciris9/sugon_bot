@@ -10,7 +10,6 @@ from nonebot.rule import to_me
 from .config import Config
 from . import loadData
 from . import link_check
-from .time_check import limit_time
 from datetime import datetime
 from .time_check import date_check
 
