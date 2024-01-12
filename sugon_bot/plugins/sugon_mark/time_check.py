@@ -18,7 +18,11 @@ def time_check():
 
 
 def date_check(pass_date):
-    if pass_date != datetime.datetime.now():
+
+    now = datetime.datetime.now()
+
+    if pass_date != str(now.year)+str(now.month)+str(now.day):
+
         return False
     else:
         return True

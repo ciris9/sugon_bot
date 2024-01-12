@@ -39,8 +39,11 @@ async def name_handle(event: Event):
     args = event.get_plaintext()
     ID = event.get_user_id()
     try:
+
         loadData.mark_board[ID]["name"] = args[4:]
+
     except KeyError:
+
         loadData.mark_board[ID] = {"point": 0, "name": args[4:]}
 
     loadData.save()
@@ -93,6 +96,7 @@ async def mark_note_handle(event: Event):
     if is_legal:
 
         try:
+
             passtime = loadData.count_board[ID]
 
             if date_check(passtime):
@@ -161,11 +165,15 @@ async def mark_normal_handle(event: Event):
                 break
 
             if not is_image:
+
                 await mark_normal.finish("你这家伙，这可不是截图ε=( o｀ω′)ノ")
+
+                pass
 
     if is_legal:
 
         try:
+
             passtime = loadData.count_board[ID]
 
             if date_check(passtime):
