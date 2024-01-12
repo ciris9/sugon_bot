@@ -63,7 +63,7 @@ async def mark_note_handle(event: Event):
 
     if not time_check.time_check():
 
-        await mark_note.finish(Object[ID]["name"] + "现在不在打卡时间哦")
+        await mark_note.finish(Object["name"] + "现在不在打卡时间哦")
 
     args = event.get_message()
 
@@ -127,7 +127,7 @@ async def mark_normal_handle(event: Event):
         await mark_note.finish("请先设置你的姓名：/请叫我 [name]")
 
     if not time_check.time_check():
-        await mark_note.finish(Object[ID]["name"] + "现在不在打卡时间哦")
+        await mark_note.finish(Object["name"] + "现在不在打卡时间哦")
 
     args = event.get_message()
 
