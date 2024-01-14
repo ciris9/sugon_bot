@@ -3,11 +3,12 @@ from typing import Type
 import datetime
 
 import nonebot
-from nonebot import get_driver
-from nonebot.adapters.qq import Event, MessageEvent
+from nonebot import get_driver, Bot
+from nonebot.adapters.qq import Event
 from nonebot.internal.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command
+from nonebot.permission import SUPERUSER
 
 from .config import Config
 from . import loadData
@@ -36,7 +37,7 @@ sub_plugins = nonebot.load_plugins(
 mark_note = on_command("marknote", aliases={"marknote", "note", "笔记打卡"}, priority=10, block=True)
 mark_normal = on_command("marknormal", aliases={"marknormal", "normal", "截图打卡"}, priority=10, block=True)
 name = on_command("nn", aliases={"nn", "NAME", "请叫我"}, priority=10, block=True)
-show_all = on_command("show", aliases={"show", ""}, priority=10, block=True)
+show_all = on_command("show", aliases={"show"}, priority=10, block=True)
 
 
 def times_check(ID, date):
@@ -59,7 +60,6 @@ async def name_check(ID, matcher: Type[Matcher]):
     except KeyError:
 
         await matcher.finish("请先设置你的姓名：/NAME [name]")
-
 
     return object
 
@@ -189,9 +189,16 @@ async def mark_normal_handle(event: Event):
 
 
 @show_all.handle()
-async def handle_show_all():
-    """这是显示所有人的分数的事件响应处理"""
+async def handle_show_all(bot: Bot, event: Event):
+    """这是显示所有人的积分的事件响应处理"""
+    if not await SUPERUSER(bot=bot, event=event):
+        await show_all.send("你没有权限执行这个操作！")
+        return 0
+    else:
+        await show_all.send("好的，管理员，以下是所有的积分")
     ans = ""
+    if loadData.mark_board == {} :
+        await show_all.finish("看来还没有人打卡的样子，真是冷清QAQ")
     for item in loadData.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)

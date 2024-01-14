@@ -1,20 +1,21 @@
 import json
 
+mark_board = {}
+count_board = {}
+
+with open('mark_board.json', 'r+') as f:
+    if f.read() == "":
+        json.dump(mark_board, f)
+
+    pass
+
+with open('count.json', 'r+') as f:
+    if f.read() == "":
+        json.dump(count_board, f)
+    pass
+
 with open('mark_board.json', 'r') as f:
     mark_board = json.load(f)
-
-'''def times_not_null_check(ID):
-    """检查Key = times是否会出错"""
-    try:
-
-        mark_board[ID]["times"] = mark_board[ID]["times"]
-
-    except KeyError:
-
-        mark_board[ID] = {"point": mark_board[ID]["point"], "name": mark_board[ID]["name"], "times": 0}
-
-    save()
-'''
 
 
 def write_in(ID, point):
@@ -54,3 +55,17 @@ def save_count():
     with open('count.json', 'w') as f:
         json.dump(count_board, f)
     pass
+
+
+'''def times_not_null_check(ID):
+    """检查Key = times是否会出错"""
+    try:
+
+        mark_board[ID]["times"] = mark_board[ID]["times"]
+
+    except KeyError:
+
+        mark_board[ID] = {"point": mark_board[ID]["point"], "name": mark_board[ID]["name"], "times": 0}
+
+    save()
+'''
