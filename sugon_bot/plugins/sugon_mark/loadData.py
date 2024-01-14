@@ -3,6 +3,12 @@ import json
 mark_board = {}
 count_board = {}
 
+with open('mark_board.json', 'a') as f:
+    pass
+
+with open('count_board.json', 'a') as f:
+    pass
+
 with open('mark_board.json', 'r+') as f:
     if f.read() == "":
         json.dump(mark_board, f)
