@@ -28,3 +28,11 @@ class MarkCalculate:
 
         weekdays = datetime.datetime.now().weekday()
         return weekdays
+
+    def check_week(self, ID, date):
+        """这个方法用于检测是否在同一周内"""
+        week = date.isocalendar().week
+        if loadData.count_board[ID]["week"] != week:
+            return False
+        else:
+            return True

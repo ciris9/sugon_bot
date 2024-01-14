@@ -34,12 +34,17 @@ def save():
 
 with open('count.json', 'r') as f:
     count_board = json.load(f)
+    print(count_board)
 
 
-def write_in_count(ID, date):
+def write_in_count(ID, date, week):
     """写入打卡时间"""
+    try:
+        count_board[ID]["date"] = date
+        count_board[ID]["week"] = week
+    except KeyError:
+        count_board[ID] ={"date" : date, "week" : week}
 
-    count_board[ID] = date
     pass
 
 

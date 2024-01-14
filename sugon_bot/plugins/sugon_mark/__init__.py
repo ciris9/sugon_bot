@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Type
+import datetime
 
 import nonebot
 from nonebot import get_driver
@@ -35,13 +36,18 @@ sub_plugins = nonebot.load_plugins(
 mark_note = on_command("marknote", aliases={"marknote", "note", "笔记打卡"}, priority=10, block=True)
 mark_normal = on_command("marknormal", aliases={"marknormal", "normal", "截图打卡"}, priority=10, block=True)
 name = on_command("nn", aliases={"nn", "NAME", "请叫我"}, priority=10, block=True)
-show_all = on_command("show", aliases={"show", ""}, priority=10, block=True, permission="1491094821")
+show_all = on_command("show", aliases={"show", ""}, priority=10, block=True)
 
 
-def times_check(ID):
-    """这是一个打卡次数的检查。如果今天是星期一而且今天与上一次打卡日期不是同一天，意味着已经不在同一周，所以清空打卡次数。"""
-    if MarkCalculate.get_weekday() == 1 and (not TimeCheckPlugin.date_check(loadData.count_board[ID])):
+def times_check(ID, date):
+    """这是一个打卡次数的检查。"""
+    if MarkCalculate.check_week(ID, date):
         loadData.mark_board[ID]["times"] = 0
+        return True
+    if loadData.mark_board[ID]["times"] < 5:
+        return True
+    else:
+        return False
 
 
 async def name_check(ID, matcher: Type[Matcher]):
@@ -94,20 +100,21 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
 
         try:
 
-            pastime = loadData.count_board[ID]
+            pastime = loadData.count_board[ID]["date"]
 
             if TimeCheckPlugin.date_check(pastime):
                 await matcher.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
 
                 pass
 
-        except KeyError:
+        except Exception as e:
 
-            pastime = TimeCheckPlugin.nowtime
             TimeCheckPlugin.time_solve()
-            loadData.count_board[ID] = TimeCheckPlugin.nowtime
+            loadData.count_board[ID] = {"date": TimeCheckPlugin.now_time, "week": TimeCheckPlugin.now_time_date}
 
-        loadData.write_in_count(ID, TimeCheckPlugin.nowtime)
+        times_check(ID, TimeCheckPlugin.now_time_date)
+
+        loadData.write_in_count(ID, TimeCheckPlugin.now_time, TimeCheckPlugin.now_time_date.isocalendar().week)
         loadData.save_count()
 
         try:
@@ -155,8 +162,6 @@ async def mark_note_handle(event: Event):
 
     loadData.times_not_null_check(ID)
 
-    times_check(ID)
-
     object = await name_check(ID, matcher=mark_note)
 
     is_legal = await image_check(matcher=mark_note, event=event, object=object)
@@ -174,9 +179,9 @@ async def mark_normal_handle(event: Event):
 
     loadData.times_not_null_check(ID)
 
-    times_check(ID)
-
     object = await name_check(ID, matcher=mark_normal)
+
+    times_check(ID)
 
     is_legal = await image_check(matcher=mark_normal, event=event, object=object)
 
