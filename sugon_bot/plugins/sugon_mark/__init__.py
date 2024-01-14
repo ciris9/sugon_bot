@@ -95,7 +95,7 @@ async def image_check(matcher: Type[Matcher], event: Event, object):
 
 async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
     """这是一个打卡检查，如果打卡内容合法，而且今天还没有签到，则进行打卡。"""
-
+    is_marked = False
     if is_legal:
 
         try:
@@ -103,14 +103,16 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
             pastime = loadData.count_board[ID]["date"]
 
             if TimeCheckPlugin.date_check(pastime):
+                is_marked = True
                 await matcher.finish("你今天已经签到过了哦！ε=( o｀ω′)ノ")
-
-                pass
 
         except Exception as e:
 
             TimeCheckPlugin.time_solve()
             loadData.count_board[ID] = {"date": TimeCheckPlugin.now_time, "week": TimeCheckPlugin.now_time_date}
+
+        if is_marked:
+            return
 
         times_check(ID, TimeCheckPlugin.now_time_date)
 
