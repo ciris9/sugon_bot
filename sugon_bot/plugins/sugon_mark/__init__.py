@@ -53,12 +53,13 @@ def times_check(ID, date):
 async def name_check(ID, matcher: Type[Matcher]):
     """这是一个命名检查，如果没有设置称呼，则输出提示。"""
     try:
+
         object = loadData.mark_board[ID]
 
     except KeyError:
 
         await matcher.finish("请先设置你的姓名：/NAME [name]")
-        pass
+
 
     return object
 
@@ -151,6 +152,7 @@ async def name_handle(event: Event):
         loadData.mark_board[ID] = {"point": 0, "name": args[6:], "times": 0}
 
     loadData.save()
+
     await name.finish("好的，那么我将称呼你为" + args[6:])
 
     pass
@@ -161,8 +163,6 @@ async def mark_note_handle(event: Event):
     """这是笔记打卡的事件响应处理"""
 
     ID = event.get_user_id()
-
-    loadData.times_not_null_check(ID)
 
     object = await name_check(ID, matcher=mark_note)
 
@@ -179,11 +179,7 @@ async def mark_normal_handle(event: Event):
 
     ID = event.get_user_id()
 
-    loadData.times_not_null_check(ID)
-
     object = await name_check(ID, matcher=mark_normal)
-
-    times_check(ID)
 
     is_legal = await image_check(matcher=mark_normal, event=event, object=object)
 

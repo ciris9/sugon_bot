@@ -3,8 +3,7 @@ import json
 with open('mark_board.json', 'r') as f:
     mark_board = json.load(f)
 
-
-def times_not_null_check(ID):
+'''def times_not_null_check(ID):
     """检查Key = times是否会出错"""
     try:
 
@@ -15,6 +14,7 @@ def times_not_null_check(ID):
         mark_board[ID] = {"point": mark_board[ID]["point"], "name": mark_board[ID]["name"], "times": 0}
 
     save()
+'''
 
 
 def write_in(ID, point):
@@ -43,13 +43,12 @@ def write_in_count(ID, date, week):
         count_board[ID]["date"] = date
         count_board[ID]["week"] = week
     except KeyError:
-        count_board[ID] ={"date" : date, "week" : week}
+        count_board[ID] = {"date": date, "week": week}
 
     pass
 
 
 def save_count():
-
     """打卡时间持久化"""
 
     with open('count.json', 'w') as f:
