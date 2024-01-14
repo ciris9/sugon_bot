@@ -1,24 +1,17 @@
 import json
+import os
 
-mark_board = {}
-count_board = {}
 
-with open('mark_board.json', 'a') as f:
+def init(file_path):
+    if not os.path.exists(file_path):
+        # 如果文件不存在，创建一个新的文件，并写入{}
+        with open(file_path, 'w') as file:
+            json.dump({}, file)
     pass
 
-with open('count_board.json', 'a') as f:
-    pass
 
-with open('mark_board.json', 'r+') as f:
-    if f.read() == "":
-        json.dump(mark_board, f)
-
-    pass
-
-with open('count.json', 'r+') as f:
-    if f.read() == "":
-        json.dump(count_board, f)
-    pass
+init("mark_board.json")
+init("count.json")
 
 with open('mark_board.json', 'r') as f:
     mark_board = json.load(f)
