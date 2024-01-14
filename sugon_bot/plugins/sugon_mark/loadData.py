@@ -5,6 +5,7 @@ with open('mark_board.json', 'r') as f:
 
 
 def times_not_null_check(ID):
+    """检查Key = times是否会出错"""
     try:
 
         mark_board[ID]["times"] = mark_board[ID]["times"]
@@ -17,6 +18,7 @@ def times_not_null_check(ID):
 
 
 def write_in(ID, point):
+    """写入记分板"""
 
     mark_board[ID]["point"] = point
     mark_board[ID]["times"] = mark_board[ID]["times"] + 1
@@ -25,6 +27,7 @@ def write_in(ID, point):
 
 
 def save():
+    """计分板数据持久化"""
     with open('mark_board.json', 'w') as f:
         json.dump(mark_board, f)
 
@@ -34,11 +37,16 @@ with open('count.json', 'r') as f:
 
 
 def write_in_count(ID, date):
+    """写入打卡时间"""
+
     count_board[ID] = date
     pass
 
 
 def save_count():
+
+    """打卡时间持久化"""
+
     with open('count.json', 'w') as f:
         json.dump(count_board, f)
     pass

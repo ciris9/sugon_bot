@@ -31,18 +31,21 @@ sub_plugins = nonebot.load_plugins(
     str(Path(__file__).parent.joinpath("plugins").resolve())
 )
 
+# 定义事件响应
 mark_note = on_command("marknote", aliases={"marknote", "note", "笔记打卡"}, priority=10, block=True)
 mark_normal = on_command("marknormal", aliases={"marknormal", "normal", "截图打卡"}, priority=10, block=True)
 name = on_command("nn", aliases={"nn", "NAME", "请叫我"}, priority=10, block=True)
-show_all = on_command("show", aliases={"show", ""}, priority=10, block=True)
+show_all = on_command("show", aliases={"show", ""}, priority=10, block=True, permission="1491094821")
 
 
 def times_check(ID):
+    """这是一个打卡次数的检查。如果今天是星期一而且今天与上一次打卡日期不是同一天，意味着已经不在同一周，所以清空打卡次数。"""
     if MarkCalculate.get_weekday() == 1 and (not TimeCheckPlugin.date_check(loadData.count_board[ID])):
         loadData.mark_board[ID]["times"] = 0
 
 
 async def name_check(ID, matcher: Type[Matcher]):
+    """这是一个命名检查，如果没有设置称呼，则输出提示。"""
     try:
         object = loadData.mark_board[ID]
 
@@ -55,6 +58,8 @@ async def name_check(ID, matcher: Type[Matcher]):
 
 
 async def image_check(matcher: Type[Matcher], event: Event, object):
+    """这是一个图片检查，检查整个消息序列中是否有图片。如果没有，输出提示"""
+
     is_in_time = TimeCheckPlugin.time_check()
 
     print(is_in_time)
@@ -82,7 +87,9 @@ async def image_check(matcher: Type[Matcher], event: Event, object):
     return is_legal
 
 
-async def point_calculate(is_legal, ID, matcher: Type[Matcher]):
+async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
+    """这是一个打卡检查，如果打卡内容合法，而且今天还没有签到，则进行打卡。"""
+
     if is_legal:
 
         try:
@@ -104,11 +111,11 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher]):
         loadData.save_count()
 
         try:
-            point = int(loadData.mark_board[ID]["point"]) + MarkCalculate.calculate(2, ID)
+            point = int(loadData.mark_board[ID]["point"]) + MarkCalculate.calculate(point, ID)
 
         except KeyError:
 
-            loadData.mark_board[ID]["point"] = MarkCalculate.calculate(2, ID)
+            loadData.mark_board[ID]["point"] = MarkCalculate.calculate(point, ID)
 
             point = loadData.mark_board[ID]["point"]
 
@@ -123,6 +130,7 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher]):
 
 @name.handle()
 async def name_handle(event: Event):
+    """这是进行命名的事件响应处理"""
     args = event.get_plaintext()
     ID = event.get_user_id()
     try:
@@ -141,6 +149,7 @@ async def name_handle(event: Event):
 
 @mark_note.handle()
 async def mark_note_handle(event: Event):
+    """这是笔记打卡的事件响应处理"""
 
     ID = event.get_user_id()
 
@@ -152,13 +161,15 @@ async def mark_note_handle(event: Event):
 
     is_legal = await image_check(matcher=mark_note, event=event, object=object)
 
-    await point_calculate(is_legal, ID, mark_note)
+    await point_calculate(is_legal, ID, mark_note, 2)
 
     pass
 
 
 @mark_normal.handle()
 async def mark_normal_handle(event: Event):
+    """这是截图打卡的事件响应处理"""
+
     ID = event.get_user_id()
 
     loadData.times_not_null_check(ID)
@@ -169,13 +180,14 @@ async def mark_normal_handle(event: Event):
 
     is_legal = await image_check(matcher=mark_normal, event=event, object=object)
 
-    await point_calculate(is_legal, ID, mark_normal)
+    await point_calculate(is_legal, ID, mark_normal, 1)
 
     pass
 
 
 @show_all.handle()
 async def handle_show_all():
+    """这是显示所有人的分数的事件响应处理"""
     ans = ""
     for item in loadData.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"

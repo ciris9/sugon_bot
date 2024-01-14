@@ -5,6 +5,7 @@ import imghdr
 
 # 定义一个函数，用于检测文本是否是链接
 def is_link(text):
+    """暂无使用，用于检测是否为一个链接"""
     # 判断文本是否以http://或https://开头
     if text.startswith("http://") or text.startswith("https://"):
         return True
@@ -14,6 +15,7 @@ def is_link(text):
 
 # 定义一个函数，用于检测链接是否可以访问
 def is_accessible(link):
+    """暂无使用，检测一个链接是否可达"""
     # 尝试发送请求到链接，并获取响应
     try:
         response = requests.get(link)
@@ -29,6 +31,7 @@ def is_accessible(link):
 
 
 def is_image_url(url):
+    """检测一个链接是否为图片"""
     # 尝试发送请求到链接，并获取响应的内容
     try:
         response = requests.get(url)
