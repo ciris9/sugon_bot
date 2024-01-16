@@ -1,7 +1,4 @@
 import requests
-import schedule
-import time
-import asyncio
 
 access_token = ' '
 
