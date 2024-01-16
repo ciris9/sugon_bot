@@ -1,5 +1,5 @@
 import datetime
-from . import loadData
+from . import load_data
 
 from chinese_calendar import is_holiday, is_workday
 
@@ -18,7 +18,7 @@ class MarkCalculate:
         if is_holiday(self.now):
             mark *= 0.5
 
-        if loadData.mark_board[ID]["times"] >= 5:
+        if load_data.mark_board[ID]["times"] >= 5:
             mark = 0
 
         return mark
@@ -32,7 +32,7 @@ class MarkCalculate:
     def check_week(self, ID, date):
         """这个方法用于检测是否在同一周内"""
         week = date.isocalendar().week
-        if loadData.count_board[ID]["week"] != week:
+        if load_data.count_board[ID]["week"] != week:
             return False
         else:
             return True

@@ -3,7 +3,7 @@ import datetime
 
 
 class TimeCheckPlugin:
-    """这个类负责时间检查。在这个类中，会把当前时间保存做字符串nowtime的形式，同时将"""
+    """这个类负责时间检查。在这个类中，会把当前时间保存做字符串now_time的形式，同时将打卡的起始时间和终止事件储存做time类"""
 
     def __init__(self):
         # 获取当前时间
@@ -38,7 +38,7 @@ class TimeCheckPlugin:
         pass
 
     def time_solve(self):
-        """在打卡系统中，我们将17：00-次日02:00视作同一天的打卡，所以需要对nowtime进行处理。flag的计算方法在time_check函数中"""
+        """在打卡系统中，我们将17：00-次日02:00视作同一天的打卡，所以需要对now_time进行处理。flag的计算方法在time_check函数中"""
         self.now = datetime.datetime.now()
         self.now_time = str(self.now.year) + str(self.now.month) + str(self.now.day + self.flag)
         self.now_time_date = datetime.datetime(self.now.year, self.now.month, self.now.day + self.flag)

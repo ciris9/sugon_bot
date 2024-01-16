@@ -11,7 +11,7 @@ from nonebot import on_command
 from nonebot.permission import SUPERUSER
 
 from .config import Config
-from . import loadData
+from . import load_data
 from . import link_check
 from .time_check import TimeCheckPlugin
 from .mark_caculate import MarkCalculate
@@ -43,9 +43,9 @@ show_all = on_command("show", aliases={"show"}, priority=10, block=True)
 def times_check(ID, date):
     """这是一个打卡次数的检查。"""
     if MarkCalculate.check_week(ID, date):
-        loadData.mark_board[ID]["times"] = 0
+        load_data.mark_board[ID]["times"] = 0
         return True
-    if loadData.mark_board[ID]["times"] < 5:
+    if load_data.mark_board[ID]["times"] < 5:
         return True
     else:
         return False
@@ -55,7 +55,7 @@ async def name_check(ID, matcher: Type[Matcher]):
     """这是一个命名检查，如果没有设置称呼，则输出提示。"""
     try:
 
-        object = loadData.mark_board[ID]
+        object = load_data.mark_board[ID]
 
     except KeyError:
 
@@ -101,7 +101,7 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
 
         try:
 
-            pastime = loadData.count_board[ID]["date"]
+            pastime = load_data.count_board[ID]["date"]
 
             if TimeCheckPlugin.date_check(pastime):
                 is_marked = True
@@ -110,29 +110,29 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
         except Exception as e:
 
             TimeCheckPlugin.time_solve()
-            loadData.count_board[ID] = {"date": TimeCheckPlugin.now_time, "week": TimeCheckPlugin.now_time_date}
+            load_data.count_board[ID] = {"date": TimeCheckPlugin.now_time, "week": TimeCheckPlugin.now_time_date}
 
         if is_marked:
             return
 
         times_check(ID, TimeCheckPlugin.now_time_date)
 
-        loadData.write_in_count(ID, TimeCheckPlugin.now_time, TimeCheckPlugin.now_time_date.isocalendar().week)
-        loadData.save_count()
+        load_data.write_in_count(ID, TimeCheckPlugin.now_time, TimeCheckPlugin.now_time_date.isocalendar().week)
+        load_data.save_count()
 
         try:
-            point = int(loadData.mark_board[ID]["point"]) + MarkCalculate.calculate(point, ID)
+            point = int(load_data.mark_board[ID]["point"]) + MarkCalculate.calculate(point, ID)
 
         except KeyError:
 
-            loadData.mark_board[ID]["point"] = MarkCalculate.calculate(point, ID)
+            load_data.mark_board[ID]["point"] = MarkCalculate.calculate(point, ID)
 
-            point = loadData.mark_board[ID]["point"]
+            point = load_data.mark_board[ID]["point"]
 
-        loadData.write_in(ID, point)
-        loadData.save()
+        load_data.write_in(ID, point)
+        load_data.save()
 
-        await matcher.finish(loadData.mark_board[ID]["name"] + "打卡成功!你的积分现在是：" + str(point))
+        await matcher.finish(load_data.mark_board[ID]["name"] + "打卡成功!你的积分现在是：" + str(point))
     else:
 
         await matcher.finish("你的打卡内容呢？")
@@ -145,13 +145,13 @@ async def name_handle(event: Event):
     ID = event.get_user_id()
     try:
 
-        loadData.mark_board[ID]["name"] = args[6:]
+        load_data.mark_board[ID]["name"] = args[6:]
 
     except KeyError:
 
-        loadData.mark_board[ID] = {"point": 0, "name": args[6:], "times": 0}
+        load_data.mark_board[ID] = {"point": 0, "name": args[6:], "times": 0}
 
-    loadData.save()
+    load_data.save()
 
     await name.finish("好的，那么我将称呼你为" + args[6:])
 
@@ -191,14 +191,14 @@ async def mark_normal_handle(event: Event):
 @show_all.handle()
 async def handle_show_all(bot: Bot, event: Event):
     """这是显示所有人的积分的事件响应处理"""
-    if not await SUPERUSER(bot=bot, event=event):
+    """if not await SUPERUSER(bot=bot, event=event):
         await show_all.send("你没有权限执行这个操作！")
         return 0
-    else:
-        await show_all.send("好的，管理员，以下是所有的积分")
+    else:"""
+    await show_all.send("好的，管理员，以下是所有的积分")
     ans = ""
-    if loadData.mark_board == {} :
+    if load_data.mark_board == {} :
         await show_all.finish("看来还没有人打卡的样子，真是冷清QAQ")
-    for item in loadData.mark_board.values():
+    for item in load_data.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)
