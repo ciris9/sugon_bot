@@ -4,7 +4,7 @@ import datetime
 
 import nonebot
 from nonebot import get_driver, Bot
-from nonebot.adapters.qq import Event
+from nonebot.adapters.qq import Event,GuildMessageEvent
 from nonebot.internal.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command
@@ -13,6 +13,7 @@ from nonebot.permission import SUPERUSER
 from .config import Config
 from . import load_data
 from . import link_check
+from .guild_api import get_roles, get_members, role_check
 from .time_check import TimeCheckPlugin
 from .mark_caculate import MarkCalculate
 
@@ -68,8 +69,6 @@ async def image_check(matcher: Type[Matcher], event: Event, object):
     """这是一个图片检查，检查整个消息序列中是否有图片。如果没有，输出提示"""
 
     is_in_time = TimeCheckPlugin.time_check()
-
-    print(is_in_time)
 
     if not is_in_time:
         await matcher.finish(object["name"] + "现在不在打卡时间哦")
@@ -189,16 +188,22 @@ async def mark_normal_handle(event: Event):
 
 
 @show_all.handle()
-async def handle_show_all(bot: Bot, event: Event):
+async def handle_show_all(bot: Bot, event: Event,Guild_event:GuildMessageEvent):
     """这是显示所有人的积分的事件响应处理"""
-    """if not await SUPERUSER(bot=bot, event=event):
+    id = Guild_event.guild_id
+    await get_roles(id)
+    await get_members(id)
+    ID = event.get_user_id()
+    if not role_check(ID):
         await show_all.send("你没有权限执行这个操作！")
         return 0
-    else:"""
-    await show_all.send("好的，管理员，以下是所有的积分")
+    else:
+        await show_all.send("好的，管理员，以下是所有的积分")
     ans = ""
-    if load_data.mark_board == {} :
+    if load_data.mark_board == {}:
         await show_all.finish("看来还没有人打卡的样子，真是冷清QAQ")
     for item in load_data.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)
+
+
