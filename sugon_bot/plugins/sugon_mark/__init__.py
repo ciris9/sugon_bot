@@ -131,7 +131,7 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
         load_data.write_in(ID, point)
         load_data.save()
 
-        await matcher.finish(load_data.mark_board[ID]["name"] + "打卡成功!你的积分现在是：" + str(point))
+        await matcher.finish(load_data.mark_board[ID]["name"] + "打卡成功!")
     else:
 
         await matcher.finish("你的打卡内容呢？")
