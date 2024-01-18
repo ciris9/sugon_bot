@@ -13,7 +13,7 @@ from nonebot.permission import SUPERUSER
 from .config import Config
 from . import load_data
 from . import link_check
-from .guild_api import get_roles, get_members, role_check
+from .guild_api import get_roles, get_members, role_check, get_owners_id
 from .time_check import TimeCheckPlugin
 from .mark_caculate import MarkCalculate
 
@@ -167,7 +167,7 @@ async def mark_note_handle(event: Event):
 
     is_legal = await image_check(matcher=mark_note, event=event, object=object)
 
-    await point_calculate(is_legal, ID, mark_note, 2)
+    await point_calculate(is_legal, ID, mark_note, 1)
 
     pass
 
@@ -191,8 +191,9 @@ async def mark_normal_handle(event: Event):
 async def handle_show_all(bot: Bot, event: Event,Guild_event:GuildMessageEvent):
     """这是显示所有人的积分的事件响应处理"""
     id = Guild_event.guild_id
-    await get_roles(id)
-    await get_members(id)
+    get_roles(id)
+    get_owners_id(id)
+    get_members(id)
     ID = event.get_user_id()
     if not role_check(ID):
         await show_all.send("你没有权限执行这个操作！")

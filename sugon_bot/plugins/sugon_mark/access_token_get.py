@@ -3,7 +3,7 @@ import requests
 access_token = ' '
 
 
-async def job():
+def job():
     url = 'https://bots.qq.com/app/getAppAccessToken'
     headers = {'Content-Type': 'application/json'}
     data = {
@@ -15,6 +15,6 @@ async def job():
     return token
 
 
-async def get_access_token():
+def get_access_token():
     global access_token
-    access_token = await job()
+    access_token = job()

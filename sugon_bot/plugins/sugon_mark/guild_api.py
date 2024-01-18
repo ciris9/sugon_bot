@@ -15,6 +15,7 @@ post_data = {
 
 members = {}
 roles = {}
+owners_id = ""
 
 
 def init(file_path):
@@ -25,9 +26,9 @@ def init(file_path):
     pass
 
 
-async def get_roles(guild_id):
+def get_roles(guild_id):
     global roles
-    await access_token_get.get_access_token()
+    access_token_get.get_access_token()
 
     Authorization_Headers = {
         "Authorization": " ",
@@ -41,8 +42,9 @@ async def get_roles(guild_id):
     roles = response.json()
 
 
-async def get_members(guild_id):
-    await access_token_get.get_access_token()
+def get_members(guild_id):
+    access_token_get.get_access_token()
+    global owners_id
 
     Authorization_Headers = {
         "Authorization": "",
@@ -51,7 +53,7 @@ async def get_members(guild_id):
 
     Authorization_Headers["Authorization"] = f"QQBot {access_token_get.access_token}"
 
-    url = f"https://api.sgroup.qq.com/guilds/{guild_id}/roles/4/members?limit=2"
+    url = f"https://api.sgroup.qq.com/guilds/{guild_id}/roles/{owners_id}/members?limit=2"
     response = httpx.get(url, headers=Authorization_Headers)
     global members
     members = response.json()
@@ -70,3 +72,18 @@ def role_check(ID):
             x = 1
 
     return False
+
+
+def get_owners_id(guild_id):
+    global owners_id
+    for role in roles["roles"]:
+        try:
+            role_info = role["id"]
+            if role["name"] == "频道主":
+                owners_id = role_info
+        except KeyError:
+            owners_id = 4
+
+
+
+
