@@ -192,9 +192,10 @@ async def handle_show_all(bot: Bot, event: Event,Guild_event:GuildMessageEvent):
     """这是显示所有人的积分的事件响应处理"""
     id = Guild_event.guild_id
     get_roles(id)
-    get_owners_id(id)
-    get_members(id)
+    id_list = [get_owners_id("频道主"), get_owners_id("超级管理员")]
+    get_members(id,id_list)
     ID = event.get_user_id()
+
     if not role_check(ID):
         await show_all.send("你没有权限执行这个操作！")
         return 0
