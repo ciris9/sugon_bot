@@ -4,7 +4,7 @@ import datetime
 
 import nonebot
 from nonebot import get_driver, Bot
-from nonebot.adapters.qq import Event,GuildMessageEvent
+from nonebot.adapters.qq import Event,GuildMessageEvent,ChannelEvent
 from nonebot.internal.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command
@@ -116,7 +116,7 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
 
         times_check(ID, TimeCheckPlugin.now_time_date)
 
-        load_data.write_in_count(ID, TimeCheckPlugin.now_time, TimeCheckPlugin.now_time_date.isocalendar().week)
+        load_data.write_in_count(ID, TimeCheckPlugin.now_time, int(TimeCheckPlugin.get_week()))
         load_data.save_count()
 
         try:

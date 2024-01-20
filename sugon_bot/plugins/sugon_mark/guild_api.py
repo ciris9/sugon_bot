@@ -1,7 +1,6 @@
 import json
 import os
 from . import access_token_get
-
 import httpx
 
 post_data = {
@@ -27,14 +26,8 @@ def init(file_path):
 
 def get_roles(guild_id):
     global roles
-    access_token_get.get_access_token()
 
-    Authorization_Headers = {
-        "Authorization": " ",
-        "X-Union-Appid": "102080600"
-    }
-
-    Authorization_Headers["Authorization"] = f"QQBot {access_token_get.access_token}"
+    Authorization_Headers = access_token_get.init_authorization_headers()
 
     url = f"https://api.sgroup.qq.com/guilds/{guild_id}/roles"
     response = httpx.get(url, headers=Authorization_Headers)
@@ -42,16 +35,11 @@ def get_roles(guild_id):
 
 
 def get_members(guild_id, roles_id: list):
-    access_token_get.get_access_token()
     global owners_id
     global members
 
-    Authorization_Headers = {
-        "Authorization": "",
-        "X-Union-Appid": "102080600"
-    }
+    Authorization_Headers = access_token_get.init_authorization_headers()
 
-    Authorization_Headers["Authorization"] = f"QQBot {access_token_get.access_token}"
     for i in roles_id:
         url = f"https://api.sgroup.qq.com/guilds/{guild_id}/roles/{i}/members?limit=2"
         response = httpx.get(url, headers=Authorization_Headers)

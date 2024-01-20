@@ -18,3 +18,16 @@ def job():
 def get_access_token():
     global access_token
     access_token = job()
+
+
+def init_authorization_headers():
+    get_access_token()
+
+    Authorization_Headers = {
+        "Authorization": " ",
+        "X-Union-Appid": "102080600"
+    }
+
+    Authorization_Headers["Authorization"] = f"QQBot {access_token}"
+
+    return Authorization_Headers

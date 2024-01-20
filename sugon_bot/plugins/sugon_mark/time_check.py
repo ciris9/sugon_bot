@@ -52,4 +52,5 @@ class TimeCheckPlugin:
             return True
 
     def get_week(self):
-        return self.now_time_date.isocalendar()
+        self.time_solve()
+        return self.now_time_date.isocalendar().week
