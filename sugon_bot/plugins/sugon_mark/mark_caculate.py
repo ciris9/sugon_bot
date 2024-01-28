@@ -9,7 +9,7 @@ class MarkCalculate:
 
     def __init__(self):
         self.now = datetime.datetime.now()
-        self.nowtime = str(self.now.year) + str(self.now.month) + str(self.now.day)
+        self.now_time = str(self.now.year) + str(self.now.month) + str(self.now.day)
 
     def calculate(self, mark, ID):
         """这个方法是主要的计算方法。在假日时，积分乘以0.5，如果超出打卡次数，则积分为0"""

@@ -140,6 +140,7 @@ async def point_calculate(is_legal, ID, matcher: Type[Matcher], point):
 @name.handle()
 async def name_handle(event: Event):
     """这是进行命名的事件响应处理"""
+    # TODO：应该检查该指令的变量，即名称是否合法，例如是否是纯文本
     args = event.get_plaintext()
     ID = event.get_user_id()
     try:

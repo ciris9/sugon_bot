@@ -1,3 +1,5 @@
+# TODO：用格式化字符串来存储所有的HTTP请求报文
+
 class ApiDatapack:
     def __init__(self, guild_id):
         self.api_datapack = {
