@@ -4,7 +4,7 @@ import datetime
 
 import nonebot
 from nonebot import get_driver, Bot
-from nonebot.adapters.qq import Event,GuildMessageEvent,ChannelEvent
+from nonebot.adapters.qq import Event, GuildMessageEvent, ChannelEvent
 from nonebot.internal.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command
@@ -50,6 +50,13 @@ def times_check(ID, date):
         return True
     else:
         return False
+
+
+async def command_check(event: Event,matcher: Type[Matcher]):
+    args = event.get_plaintext()
+    ID = event.get_user_id()
+    if args[6] != " ":
+        await matcher.finish("指令的格式不正确哦！")
 
 
 async def name_check(ID, matcher: Type[Matcher]):
@@ -143,6 +150,8 @@ async def name_handle(event: Event):
     # TODO：应该检查该指令的变量，即名称是否合法，例如是否是纯文本
     args = event.get_plaintext()
     ID = event.get_user_id()
+    await command_check(event=event,matcher=name)
+
     try:
 
         load_data.mark_board[ID]["name"] = args[6:]
@@ -166,6 +175,8 @@ async def mark_note_handle(event: Event):
 
     object = await name_check(ID, matcher=mark_note)
 
+    await command_check(event=event, matcher=name)
+
     is_legal = await image_check(matcher=mark_note, event=event, object=object)
 
     await point_calculate(is_legal, ID, mark_note, 1)
@@ -181,6 +192,8 @@ async def mark_normal_handle(event: Event):
 
     object = await name_check(ID, matcher=mark_normal)
 
+    await command_check(event=event, matcher=name)
+
     is_legal = await image_check(matcher=mark_normal, event=event, object=object)
 
     await point_calculate(is_legal, ID, mark_normal, 1)
@@ -189,12 +202,12 @@ async def mark_normal_handle(event: Event):
 
 
 @show_all.handle()
-async def handle_show_all(bot: Bot, event: Event,Guild_event:GuildMessageEvent):
+async def handle_show_all(bot: Bot, event: Event, Guild_event: GuildMessageEvent):
     """这是显示所有人的积分的事件响应处理"""
     id = Guild_event.guild_id
     get_roles(id)
     id_list = [get_owners_id("频道主"), get_owners_id("超级管理员")]
-    get_members(id,id_list)
+    get_members(id, id_list)
     ID = event.get_user_id()
 
     if not role_check(ID):
@@ -208,5 +221,3 @@ async def handle_show_all(bot: Bot, event: Event,Guild_event:GuildMessageEvent):
     for item in load_data.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)
-
-
