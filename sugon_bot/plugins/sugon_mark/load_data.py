@@ -12,6 +12,7 @@ def init(file_path):
 
 init("mark_board.json")
 init("count.json")
+init("config.json")
 
 with open('mark_board.json', 'r') as f:
     mark_board = json.load(f)
@@ -55,6 +56,9 @@ def save_count():
         json.dump(count_board, f)
     pass
 
+
+with open('config.json', 'r') as f:
+    time = json.load(f)
 
 '''def times_not_null_check(ID):
     """检查Key = times是否会出错"""

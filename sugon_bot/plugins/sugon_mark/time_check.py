@@ -1,5 +1,6 @@
 # 导入 datetime 模块
 import datetime
+import load_data
 
 
 class TimeCheckPlugin:
@@ -7,34 +8,69 @@ class TimeCheckPlugin:
 
     def __init__(self):
         # 获取当前时间
+        self.start = None
+        self.end = None
+        self.isBefore = True
         self.now = datetime.datetime.now()
 
-        # 定义 17:00 和 02:00 的时间对象
-        self.start = datetime.time(17, 0, 0)
-        self.end = datetime.time(2, 0, 0)
+        self.time_set()
 
         self.flag = 0
 
         self.now_time = str(self.now.year) + str(self.now.month) + str(self.now.day + self.flag)
         self.now_time_date = datetime.datetime(self.now.year, self.now.month, self.now.day)
 
-        pass
+    def time_compare_less(self, timeA, timeB):
+        if timeA.hour > timeB.hour:
+            return False
+        elif timeA.hour < timeB.hour:
+            return True
+        else:
+            if timeA.minute > timeB.minute:
+                return False
+            elif timeA.minute < timeB.minute:
+                return True
+            else:
+                if timeA.second > timeB.second:
+                    return False
+                elif timeA.second < timeB.second:
+                    return True
+                else:
+                    return True
+
+
+    def time_set(self):
+        # 定义 start 和 end 的时间对象
+        self.start = datetime.time(load_data.time["start_time"]["hour"],
+                                   load_data.time["start_time"]["minute"],
+                                   load_data.time["start_time"]["second"])
+        self.end = datetime.time(load_data.time["start_time"]["hour"],
+                                 load_data.time["start_time"]["minute"],
+                                 load_data.time["start_time"]["second"])
+        self.isBefore = self.time_compare_less(self.start, self.end)
 
     def time_check(self):
-        """判断当前时间是否处于 17:00 到次日 02:00 之间"""
+        """判断当前时间是否处于start和end之间"""
         self.now = datetime.datetime.now()
-        if self.now.time() <= self.end:
-            self.flag = -1
-            self.time_solve()
-            return True
-
-        elif self.start <= self.now.time():
-            self.flag = 0
-            self.time_solve()
-            return True
-
+        if self.isBefore:
+            if self.end >= self.now.time() >= self.start:
+                self.flag = 0
+                self.time_solve()
+                return True
+            else:
+                return False
         else:
-            return False
+            if self.now.time() <= self.end:
+                self.flag = -1
+                self.time_solve()
+                return True
+
+            elif self.start <= self.now.time():
+                self.flag = 0
+                self.time_solve()
+                return True
+            else:
+                return False
         pass
 
     def time_solve(self):
