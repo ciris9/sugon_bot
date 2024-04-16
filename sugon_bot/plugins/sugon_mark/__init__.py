@@ -55,7 +55,7 @@ def times_check(ID, date):
 async def command_check(event: Event,matcher: Type[Matcher]):
     args = event.get_plaintext()
     ID = event.get_user_id()
-    if args[6] != " ":
+    if args[5] != " ":
         await matcher.finish("指令的格式不正确哦！")
 
 
