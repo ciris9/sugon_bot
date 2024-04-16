@@ -44,9 +44,9 @@ class TimeCheckPlugin:
         self.start = datetime.time(load_data.time["start_time"]["hour"],
                                    load_data.time["start_time"]["minute"],
                                    load_data.time["start_time"]["second"])
-        self.end = datetime.time(load_data.time["start_time"]["hour"],
-                                 load_data.time["start_time"]["minute"],
-                                 load_data.time["start_time"]["second"])
+        self.end = datetime.time(load_data.time["end_time"]["hour"],
+                                 load_data.time["end_time"]["minute"],
+                                 load_data.time["end_time"]["second"])
         self.isBefore = self.time_compare_less(self.start, self.end)
 
     def time_check(self):
