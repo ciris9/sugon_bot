@@ -52,10 +52,10 @@ def times_check(ID, date):
         return False
 
 
-async def command_check(event: Event,matcher: Type[Matcher]):
+async def command_check(event: Event,matcher: Type[Matcher],index:int):
     args = event.get_plaintext()
     ID = event.get_user_id()
-    if args[5] != " ":
+    if args[index] != " ":
         await matcher.finish("指令的格式不正确哦！")
 
 
@@ -150,7 +150,7 @@ async def name_handle(event: Event):
     # TODO：应该检查该指令的变量，即名称是否合法，例如是否是纯文本
     args = event.get_plaintext()
     ID = event.get_user_id()
-    await command_check(event=event,matcher=name)
+    await command_check(event=event,matcher=name,index=5)
 
     try:
 
@@ -175,7 +175,7 @@ async def mark_note_handle(event: Event):
 
     object = await name_check(ID, matcher=mark_note)
 
-    await command_check(event=event, matcher=name)
+    await command_check(event=event, matcher=name,index=5)
 
     is_legal = await image_check(matcher=mark_note, event=event, object=object)
 
@@ -192,7 +192,7 @@ async def mark_normal_handle(event: Event):
 
     object = await name_check(ID, matcher=mark_normal)
 
-    await command_check(event=event, matcher=name)
+    await command_check(event=event, matcher=name,index=7)
 
     is_legal = await image_check(matcher=mark_normal, event=event, object=object)
 
