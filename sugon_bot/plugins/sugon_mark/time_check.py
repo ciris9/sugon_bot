@@ -1,6 +1,6 @@
 # 导入 datetime 模块
 import datetime
-import load_data
+from . import load_data
 
 
 class TimeCheckPlugin:
