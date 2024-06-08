@@ -1,14 +1,19 @@
 import requests
+import nonebot
+
+config = nonebot.get_driver().config
 
 access_token = ' '
 
+secret = config.qq_bots[0]["secret"]
+appId = config.qq_bots[0]["id"]
 
 def job():
     url = 'https://bots.qq.com/app/getAppAccessToken'
     headers = {'Content-Type': 'application/json'}
     data = {
-        "appId": "102080600",
-        "clientSecret": "RsJkBc3UvNpHjBd5XzSvOrKnGjDhBf9d"
+        "appId": {appId},
+        "clientSecret": {secret}
     }
     response = requests.post(url, headers=headers, json=data)
     token = response.json()['access_token']
