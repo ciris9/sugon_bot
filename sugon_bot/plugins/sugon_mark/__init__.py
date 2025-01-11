@@ -1,10 +1,11 @@
 from pathlib import Path
 from typing import Type
 import datetime
+from . import group_image_check
 
 import nonebot
 from nonebot import get_driver, Bot
-from nonebot.adapters.qq import Event, GuildMessageEvent, ChannelEvent
+from nonebot.adapters.qq import Event, GuildMessageEvent, GroupRobotEvent
 from nonebot.internal.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from nonebot import on_command
@@ -16,6 +17,7 @@ from . import link_check
 from .guild_api import get_roles, get_members, role_check, get_owners_id
 from .time_check import TimeCheckPlugin
 from .mark_caculate import MarkCalculate
+
 
 TimeCheckPlugin = TimeCheckPlugin()
 MarkCalculate = MarkCalculate()
@@ -89,6 +91,12 @@ async def image_check(matcher: Type[Matcher], event: Event, object):
         if segment.type == 'image':
             if link_check.is_image_url(segment.data['url']):
                 is_image = True
+                is_legal = True
+                print(link_check.is_image_url(segment.data['url']))
+                break
+            elif group_image_check.is_image_url(segment.data['url']):
+                print(group_image_check.is_image_url(segment.data['url']))
+                is_image =True
                 is_legal = True
                 break
 
@@ -204,6 +212,7 @@ async def mark_normal_handle(event: Event):
 @show_all.handle()
 async def handle_show_all(bot: Bot, event: Event, Guild_event: GuildMessageEvent):
     """这是显示所有人的积分的事件响应处理"""
+
     id = Guild_event.guild_id
     get_roles(id)
     id_list = [get_owners_id("频道主"), get_owners_id("超级管理员")]
@@ -221,3 +230,20 @@ async def handle_show_all(bot: Bot, event: Event, Guild_event: GuildMessageEvent
     for item in load_data.mark_board.values():
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)
+
+@show_all.handle()
+async def group_show_all(bot: Bot,event:Event):
+    """这是显示所有人的积分的事件响应处理"""
+    ID = event.get_user_id()
+    if ID=="6EE6FD83223EB85FDFF79452C2F20D2E":
+        await show_all.send("好的，管理员，以下是所有的积分")
+    else:
+        await show_all.send("你没有权限执行这个操作！")
+        return 0
+    ans = ""
+    if load_data.mark_board == {}:
+        await show_all.finish("看来还没有人打卡的样子，真是冷清QAQ")
+    for item in load_data.mark_board.values():
+        ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
+    await show_all.finish(ans)
+

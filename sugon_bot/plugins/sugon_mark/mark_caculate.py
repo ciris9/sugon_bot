@@ -1,7 +1,7 @@
 import datetime
 from . import load_data
 
-from chinese_calendar import is_holiday, is_workday
+import holidays
 
 
 class MarkCalculate:
@@ -10,12 +10,13 @@ class MarkCalculate:
     def __init__(self):
         self.now = datetime.datetime.now()
         self.now_time = str(self.now.year) + str(self.now.month) + str(self.now.day)
+        self.china_holidays = holidays.China(years=datetime.date.today().year)
 
     def calculate(self, mark, ID):
         """这个方法是主要的计算方法。在假日时，积分乘以0.5，如果超出打卡次数，则积分为0"""
 
         self.now = datetime.datetime.now()
-        if is_holiday(self.now):
+        if self.now in self.china_holidays:
             mark *= 0.5
 
         if load_data.mark_board[ID]["times"] >= 5:
