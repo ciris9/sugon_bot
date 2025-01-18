@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Type
 import datetime
+import re
 from . import group_image_check
 
 import nonebot
@@ -17,6 +18,7 @@ from . import link_check
 from .guild_api import get_roles, get_members, role_check, get_owners_id
 from .time_check import TimeCheckPlugin
 from .mark_caculate import MarkCalculate
+from . import super_user_group
 
 
 TimeCheckPlugin = TimeCheckPlugin()
@@ -41,7 +43,10 @@ mark_note = on_command("marknote", aliases={"marknote", "note", "笔记打卡"},
 mark_normal = on_command("marknormal", aliases={"marknormal", "normal", "截图打卡"}, priority=10, block=True)
 name = on_command("nn", aliases={"nn", "NAME", "请叫我"}, priority=10, block=True)
 show_all = on_command("show", aliases={"show"}, priority=10, block=True)
-
+remove = on_command("remove", aliases={"remove"},priority=10,block=True)
+set_score = on_command("setscore", aliases={"setscore"},priority=10,block=True)
+get_user_id =on_command("get_user_id",aliases={"ID"},priority=10,block=True)
+set_super_user =on_command("set_super_user",aliases={"super"},priority=10,block=True)
 
 def times_check(ID, date):
     """这是一个打卡次数的检查。"""
@@ -235,7 +240,7 @@ async def handle_show_all(bot: Bot, event: Event, Guild_event: GuildMessageEvent
 async def group_show_all(bot: Bot,event:Event):
     """这是显示所有人的积分的事件响应处理"""
     ID = event.get_user_id()
-    if ID=="6EE6FD83223EB85FDFF79452C2F20D2E":
+    if super_user_group.check_super_user_group(ID):
         await show_all.send("好的，管理员，以下是所有的积分")
     else:
         await show_all.send("你没有权限执行这个操作！")
@@ -247,3 +252,70 @@ async def group_show_all(bot: Bot,event:Event):
         ans = ans + item["name"] + "积分:" + str(item["point"]) + "\n"
     await show_all.finish(ans)
 
+@remove.handle()
+async def remove_mark(bot: Bot,event:Event):
+
+    ID = event.get_user_id()
+    if super_user_group.check_super_user_group(ID):
+        await remove.send("好的，管理员，为您进行操作")
+    else:
+        await remove.send("你没有权限执行这个操作！")
+        return 0
+    args = event.get_plaintext()
+    pattern = r"/remove\s+(.*)"
+    match = re.search(pattern, args)
+    keys_to_delete = [key for key, value in load_data.mark_board.items() if value["name"] == match.group(1)]
+    for item in keys_to_delete:
+        load_data.mark_board.pop(item)
+        load_data.save()
+    await remove.finish("已经删除"+match.group(1)+"的积分信息！")
+
+@set_score.handle()
+async def set_score(bot: Bot,event:Event):
+    ID = event.get_user_id()
+    if super_user_group.check_super_user_group(ID):
+        await set_score.send("好的，管理员，为您进行操作")
+    else:
+        await set_score.send("你没有权限执行这个操作！")
+        return 0
+    args = event.get_plaintext()
+    pattern = r"/setscore\s+(\S+)\s+([\d\.]+)"
+
+    # 执行匹配
+    match = re.search(pattern, args)
+    score = float()
+    name = ''
+    if match:
+        name = match.group(1)  # 获取第一个捕获组 (name)
+        score = float(match.group(2))  # 获取第二个捕获组 (score) 并转换为浮动数
+    else:
+        print("没有匹配到")
+    for key, value in load_data.mark_board.items():
+        if value["name"] == name:
+            value["point"] = score  # 修改 point 为新的 score
+            load_data.save()
+    await set_score.finish("已经修改"+match.group(1)+"的积分！")
+
+@get_user_id.handle()
+async def handle_get_user_id(bot:Bot,event:Event):
+    ID = event.get_user_id()
+    await get_user_id.finish("你的ID是"+ID)
+
+@set_super_user.handle()
+async def handle_set_super_user(bot:Bot,event:Event):
+    ID = event.get_user_id()
+    if super_user_group.check_super_user_group(ID):
+        await set_super_user.send("好的，管理员，为您进行操作")
+    else:
+        await set_super_user.send("你没有权限执行这个操作！")
+        return 0
+    args = event.get_plaintext()
+    pattern = r"/super\s+(.*)"
+    match = re.search(pattern, args)
+    super_user_id = match.group(1)
+    if super_user_group.check_super_user_group(super_user_id):
+        await set_super_user.finish("这位用户已经是管理员了。")
+        return
+
+    super_user_group.join_super(super_user_id)
+    await set_super_user.finish("已经将ID为"+super_user_id+"的用户设为管理员")
