@@ -271,7 +271,7 @@ async def remove_mark(bot: Bot,event:Event):
     await remove.finish("已经删除"+match.group(1)+"的积分信息！")
 
 @set_score.handle()
-async def set_score(bot: Bot,event:Event):
+async def handle_set_score(bot: Bot,event:Event):
     ID = event.get_user_id()
     if super_user_group.check_super_user_group(ID):
         await set_score.send("好的，管理员，为您进行操作")
